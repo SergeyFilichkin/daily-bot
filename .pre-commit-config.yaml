@@ -1,0 +1,31 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      # для очистки кода от бесполезного пустого пространства
+      - id: trailing-whitespace
+      # для гарантии, что файлы заканчиваются новой строкой (и только новой строкой)
+      - id: end-of-file-fixer
+      # Пытается загрузить все файлы YAML для проверки синтаксиса.
+      - id: check-yaml
+      # для проверки конфликтов слияния до любого коммита
+      - id: check-merge-conflict
+      # Проверяет наличие закрытых ключей.
+      - id: detect-private-key
+      # Проверьте наличие импорта отладчика и вызовов breakpoint().
+      - id: debug-statements
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      # Обеспечить использование аннотаций типов
+      - id: python-use-type-annotations
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.8.1
+    hooks:
+      # Run the linter.
+      - id: ruff
+      # Run the formatter.
+      - id: ruff-format
