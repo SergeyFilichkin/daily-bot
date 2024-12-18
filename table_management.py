@@ -1,4 +1,5 @@
 import gspread
+from typing import Union
 
 gc = gspread.service_account()
 
@@ -7,115 +8,107 @@ daily_table = "Daily-bot"
 sh = gc.open(daily_table)
 
 
+def create_sheets(values: list, title: str):
+    """Создает листы."""
+    sheet = sh.add_worksheet(title=title, rows=1000, cols=26)
+    values = sheet.batch_update(
+        [
+            {
+                "range": "A1:D1",
+                "values": values,
+            }
+        ]
+    )
+
+    sheet.format("A1:D1", {"textFormat": {"bold": True}})
+
+    return values
+
+
+def add_values(
+    title: str, a: Union[str, int] = "", b: str = "", c: str = "", d: str = ""
+):
+    """Добавляет значения."""
+    ws = sh.worksheet(title)
+    values = ws.col_values(1)
+    first_empty_row = len(values) + 1
+
+    ws.batch_update(
+        [
+            {
+                "range": f"A{first_empty_row}:D{first_empty_row}",
+                "values": [[a, b, c, d]],
+            }
+        ]
+    )
+
+    return values
+
+
 def create_list_student_sheet():
     """Создает лист со списком учеников."""
-    sheet = sh.add_worksheet(title="Ученики", rows=1000, cols=26)
+    title = "Ученики"
+    vals = [["Дата", "Запланированные темы", "Изученные темы", "Часы"]]
 
-    sheet.batch_update(
-        [
-            {
-                "range": "A1:D1",
-                "values": [["Телеграм_id", "Имя", "Фамилия", "Учет часов"]],
-            }
-        ]
-    )
-
-    sheet.format("A1:D1", {"textFormat": {"bold": True}})
-
-    return sheet
+    create_sheets(vals, title)
 
 
-def create_personal_student_sheet(telegram_id, surname):
+def create_personal_student_sheet(telegram_id: int, surname: str):
     """Создает персональный лист ученика."""
     title = f"{telegram_id}_{surname}"
-    sheet = sh.add_worksheet(title=title, rows=1000, cols=26)
+    vals = [["Дата", "Запланированные темы", "Изученные темы", "Часы"]]
 
-    sheet.batch_update(
-        [
-            {
-                "range": "A1:D1",
-                "values": [
-                    ["Дата", "Запланированные темы", "Изученные темы", "Часы"]
-                ],
-            }
-        ]
-    )
-
-    sheet.format("A1:D1", {"textFormat": {"bold": True}})
-
-    return sheet
+    create_sheets(vals, title)
 
 
-def add_student(telegram_id, name, surname, hours):
+def add_student(telegram_id: int, name: str, surname: str, hours: str):
     """
     Добавление ученика в список учеников и создание персонального листа ученика.
     Функция проверяет есть ли лист 'Ученики', если есть добавляет в список и создает персональный лист,
     если нет сначала создает список 'Ученики'.
-
-    В блоке except используется функция create_list_student_sheet().
-    В блоке finally используется функция create_personal_student_sheet(telegram_id, surname).
     """
+    title = "Ученики"
+    a = telegram_id
+    b = name
+    c = surname
+    d = hours
+
     try:
-        sh.worksheet("Ученики")
+        sh.worksheet(title)
 
     except gspread.WorksheetNotFound:
         create_list_student_sheet()
 
     finally:
-        ws = sh.worksheet("Ученики")
-        values = ws.col_values(1)
-
-        first_empty_row = len(values) + 1
-
-        ws.batch_update(
-            [
-                {
-                    "range": f"A{first_empty_row}:D{first_empty_row}",
-                    "values": [[telegram_id, name, surname, hours]],
-                }
-            ]
-        )
+        add_values(title, a, b, c, d)
 
         create_personal_student_sheet(telegram_id, surname)
 
 
-def add_week_topics(telegram_id, surname, date, topics):
+def add_week_topics(telegram_id: int, surname: str, date: str, topics: str):
     """Добавляет дату и список дел на неделю"""
-    ws = sh.worksheet(f"{telegram_id}_{surname}")
-    values = ws.col_values(1)
+    title = f"{telegram_id}_{surname}"
+    a = date
+    b = topics
 
-    first_empty_row = len(values) + 1
-
-    ws.batch_update(
-        [
-            {
-                "range": f"A{first_empty_row}:B{first_empty_row}",
-                "values": [[date, topics]],
-            }
-        ]
-    )
+    add_values(title, a, b)
 
 
-def add_daily_progress(telegram_id, surname, date, topics, hours):
+def add_daily_progress(
+    telegram_id: int, surname: str, date: str, topics: str, hours: str
+):
     """Фиксирует прогресс за день"""
-    ws = sh.worksheet(f"{telegram_id}_{surname}")
-    values = ws.col_values(1)
+    title = f"{telegram_id}_{surname}"
+    a = date
+    b = ""
+    c = topics
+    d = hours
 
-    first_empty_row = len(values) + 1
-
-    ws.batch_update(
-        [
-            {"range": f"A{first_empty_row}", "values": [[date]]},
-            {
-                "range": f"C{first_empty_row}:D{first_empty_row}",
-                "values": [[topics, hours]],
-            },
-        ]
-    )
+    add_values(title, a, b, c, d)
 
 
 def get_all_telegram_id():
-    """ "Получение списка всех Tелеграм_ID"""
+    """Получение списка всех Tелеграм_ID"""
     ws = sh.worksheet("Ученики")
     values_list = ws.col_values(1)
     return values_list
