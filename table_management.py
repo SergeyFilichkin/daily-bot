@@ -72,10 +72,6 @@ def add_student(telegram_id: int, name: str, surname: str, hours: str):
     если нет сначала создает список 'Ученики'.
     """
     title = "Ученики"
-    column_a = telegram_id
-    column_b = name
-    column_c = surname
-    column_d = hours
 
     try:
         sh.worksheet(title)
@@ -84,7 +80,13 @@ def add_student(telegram_id: int, name: str, surname: str, hours: str):
         create_list_student_sheet()
 
     finally:
-        add_values(title, column_a, column_b, column_c, column_d)
+        add_values(
+            title,
+            column_a=telegram_id,
+            column_b=name,
+            column_c=surname,
+            column_d=hours,
+        )
 
         create_personal_student_sheet(telegram_id, surname)
 
@@ -92,10 +94,8 @@ def add_student(telegram_id: int, name: str, surname: str, hours: str):
 def add_week_topics(telegram_id: int, surname: str, date: str, topics: str):
     """Добавляет дату и список дел на неделю"""
     title = f"{telegram_id}_{surname}"
-    column_a = date
-    column_b = topics
 
-    add_values(title, column_a, column_b)
+    add_values(title, column_a=date, column_b=topics)
 
 
 def add_daily_progress(
@@ -103,12 +103,10 @@ def add_daily_progress(
 ):
     """Фиксирует прогресс за день"""
     title = f"{telegram_id}_{surname}"
-    column_a = date
-    column_b = ""
-    column_c = topics
-    column_d = hours
 
-    add_values(title, column_a, column_b, column_c, column_d)
+    add_values(
+        title, column_a=date, column_b="", column_c=topics, column_d=hours
+    )
 
 
 def get_all_telegram_id():
