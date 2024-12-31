@@ -4,3 +4,5 @@ venv/
 .env
 .pylintrc
 bot.log
+credentials.json
+
