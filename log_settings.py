@@ -11,16 +11,16 @@ class FileHandler(logging.Handler):
         with open(self.filename, "a") as file:
             file.write(message + "\n")
 class LevelFileHandler(logging.Handler):
-    def __init__(self, filename):
-        logging.Handler.__init__(self)
+    def __init__(self, filename, mode):
+        super().__init__()
         self.filename = filename
-
-    def emit(self, record):
-        message = self.format(record)
+        self.mode = mode
+    def emit(self, record: logging.LogRecord):
+        message: str = self.format(record)
         level = record.levelname.lower()
-        filename = level + self.filename
-        with open(filename, "a") as file:
-            file.write(message + "\n")
+        filename = self.filename + level + '.log'
+        with open(filename, mode=self.mode) as f:
+            f.write(message + '\n')
 
 logger_config = {
     "version": 1,
@@ -38,15 +38,18 @@ logger_config = {
             "formatter": "std_format",
         },
         "file": {
-            "()": FileHandler,
-            "level": "INFO",
-            "filename": "bot.log",
+                "()": lambda: FileHandler('bot.log'),
+                "level": "INFO",
+                "formatter": "std_format",
+            },
+        "level_files_notifications": {
+            "()": lambda: LevelFileHandler('notifications', mode='a'),
+            "level": "DEBUG",
             "formatter": "std_format",
         },
-        "level_files": {
-            "()": LevelFileHandler,
+        "level_files_google_sheets": {
+            "()": lambda: LevelFileHandler('google_sheets', mode='a'),
             "level": "DEBUG",
-            "filename": "notification.log",
             "formatter": "std_format",
         },
     },
@@ -57,7 +60,11 @@ logger_config = {
         },
         "notifications": {
             "level": "DEBUG",
-            "handlers": ["console", "file", "level_files"],
+            "handlers": ["console", "level_files_notifications"],
+        },
+        "google_sheets": {
+            "level": "DEBUG",
+            "handlers": ["console", "level_files_google_sheets"],
         }
     },
 }

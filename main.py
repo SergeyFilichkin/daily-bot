@@ -27,4 +27,5 @@ register_handlers(bot)
 
 
 if __name__ == "__main__":
+    logger.warning('start bot')
     bot.infinity_polling()

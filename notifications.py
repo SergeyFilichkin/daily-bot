@@ -66,8 +66,8 @@ def add_daily_progress_job(bot: TeleBot, telegram_id: int) -> None:
 
 def schedule_all_notifications(bot: TeleBot) -> None:
     ids = get_all_students_ids()
-    logger_notifications.info(f'list all students: {ids}')
+    logger_notifications.warning(f'list all students: {ids}')
     for id in ids:
-        logger_notifications.debug(f'schedule_all_notifications for user_id: {id}')
+        logger_notifications.info(f'schedule_all_notifications for user_id: {id}')
         add_weekly_study_plan_job(bot, id)
         add_daily_progress_job(bot, id)
