@@ -8,8 +8,8 @@ from states import UserProgress
 logger_notifications = logging.getLogger('notifications')
 scheduler = BackgroundScheduler(timezone="Europe/Moscow")
 
-WEEKLY_JOB_TIME = "thu, 17:20"
-DAILY_JOB_TIME = "17:22"
+WEEKLY_JOB_TIME = "thu, 21:00"
+DAILY_JOB_TIME = "21:00"
 
 def send_weekly_study_plan(bot: TeleBot, telegram_id: int) -> None:
     bot.set_state(telegram_id, UserProgress.set_weekly_study_plan)
