@@ -3,7 +3,7 @@ from os import getenv
 
 from telebot import TeleBot, custom_filters
 from telebot.states.sync.middleware import StateMiddleware
-from telebot.storage import StateMemoryStorage
+from telebot.storage import StateRedisStorage
 
 from handlers import register_handlers
 from log_settings import logger_config
@@ -14,7 +14,7 @@ TOKEN = getenv("TOKEN")
 logging.config.dictConfig(logger_config)
 logger = logging.getLogger("bot_logger")
 
-state_storage = StateMemoryStorage()  # TODO: change to redis
+state_storage = StateRedisStorage()  # TODO: change to redis
 
 bot = TeleBot(TOKEN, state_storage=state_storage, use_class_middlewares=True)
 bot.setup_middleware(StateMiddleware(bot))
