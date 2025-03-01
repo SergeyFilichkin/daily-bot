@@ -85,7 +85,7 @@ def get_all_students_ids() -> list[str]:
         initialize_students_sheet()
     worksheet = sheet.worksheet(ALL_STUDENTS)
     ids = worksheet.col_values(1)[1:]
-    logger_sheets.warning(f'{str([(get_student_data_by_telegram_id(int(id))) for id in ids])}')
+    #logger_sheets.warning(f'{str([(get_student_data_by_telegram_id(int(id))) for id in ids])}')
     return ids
 
 
