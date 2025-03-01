@@ -71,4 +71,5 @@ def schedule_all_notifications(bot: TeleBot) -> None:
         logger_notifications.info(f'schedule_all_notifications for user_id: {id}')
         add_weekly_study_plan_job(bot, id)
         add_daily_progress_job(bot, id)
+        send_daily_progress(bot, id)
 
