@@ -47,6 +47,7 @@ def add_weekly_study_plan_job(bot: TeleBot, telegram_id: int) -> None:
         id=job_id,
         kwargs={"bot": bot, "telegram_id": telegram_id},
     )
+    scheduler.start()
 
 
 def add_daily_progress_job(bot: TeleBot, telegram_id: int) -> None:
@@ -62,6 +63,7 @@ def add_daily_progress_job(bot: TeleBot, telegram_id: int) -> None:
         id=job_id,
         kwargs={"bot": bot, "telegram_id": telegram_id},
     )
+    scheduler.start()
 
 
 def schedule_all_notifications(bot: TeleBot) -> None:
